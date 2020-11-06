@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from '@emotion/styled'
 import { connect } from 'react-redux'
 import { signIn, signOut } from "../../store/actions/authActions";
-import {addTransition, listTransitions} from "../../store/actions/transitionsActions";
+import {addTransition} from "../../store/actions/transitionsActions";
 import PromptDialog from "./PromptDialog";
+import {createWallet, getWallets} from "../../store/actions/walletActions";
 
 const Container = styled.div`
     display: flex;
@@ -23,11 +24,27 @@ const Button = styled.button`
     text-transform: uppercase;
 `
 
-const TopBar = ({ signIn, signOut, user, add, list, error} ) => {
+const TopBar = ({ signIn, signOut, user, add, list, error, getWallets, wallets, createWallet} ) => {
+
+    useEffect(() => {
+        user && getWallets();
+    }, [])
 
     const content = user ? (
         <Container>
-            <h1 onClick={ () => list()}>{user ? user.displayName : 'undefined'}</h1>
+            <Button onClick={() => {
+                getWallets()
+                console.log(wallets)
+            }}>Get Wallets</Button>
+            <Button onClick={() => {
+                createWallet({
+                    name: 'new_wallet',
+                    amount: '420',
+                    icon: 'http://placecorgi.com/50/50',
+                })
+                getWallets()
+                console.log('create')
+            }}>Create Wallet</Button>
             <PromptDialog add={add}/>
             <Button onClick={() => signOut()}>Logout</Button>
         </Container>
@@ -48,7 +65,8 @@ const mapDispatchToProps = (dispatch) => {
         signIn: () => dispatch(signIn()),
         signOut: () => dispatch(signOut()),
         add: (transtion) => dispatch(addTransition(transtion)),
-        list: () => dispatch(listTransitions()),
+        getWallets: () => dispatch(getWallets()),
+        createWallet: (wallet) => dispatch(createWallet(wallet)),
     }
 }
 
@@ -56,6 +74,7 @@ const mapStateToProps = (state) => {
     return {
         user: state.auth.user,
         error: state.transitions.error,
+        wallets: state.wallet.wallets,
     }
 }
 
