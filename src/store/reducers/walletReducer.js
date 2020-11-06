@@ -28,6 +28,17 @@ const walletReducer = (state = initialData, action) => {
                 ...state,
                 error: action.error,
             }
+        case 'WALLET_UPDATE_OK':
+            return {
+                ...state,
+                wallets: action.wallets,
+                error: '',
+            }
+        case 'WALLET_UPDATE_ERROR':
+            return {
+                ...state,
+                error: action.error,
+            }
         default:
             return state;
     }

@@ -4,7 +4,13 @@ import { connect } from 'react-redux'
 import { signIn, signOut } from "../../store/actions/authActions";
 import {addTransition} from "../../store/actions/transitionsActions";
 import PromptDialog from "./PromptDialog";
-import {createWallet, getWallets} from "../../store/actions/walletActions";
+import {
+    addAmountToWallet,
+    createWallet,
+    deleteWallet,
+    getWallets,
+    subtractAmountToWallet
+} from "../../store/actions/walletActions";
 
 const Container = styled.div`
     display: flex;
@@ -24,7 +30,7 @@ const Button = styled.button`
     text-transform: uppercase;
 `
 
-const TopBar = ({ signIn, signOut, user, add, list, error, getWallets, wallets, createWallet} ) => {
+const TopBar = ({ signIn, signOut, user, add, list, error, getWallets, wallets, createWallet, deleteWallet, addAmount, subAmount } ) => {
 
     useEffect(() => {
         user && getWallets();
@@ -45,6 +51,15 @@ const TopBar = ({ signIn, signOut, user, add, list, error, getWallets, wallets, 
                 getWallets()
                 console.log('create')
             }}>Create Wallet</Button>
+            <Button onClick={() => {
+                deleteWallet(wallets[0])
+            }}>Delete first wallet</Button>
+            <Button onClick={() => {
+                addAmount(wallets[0].id, 50)
+            }}>Add 50$</Button>
+            <Button onClick={() => {
+                subAmount(wallets[0].id, 50)
+            }}>Sub 50$</Button>
             <PromptDialog add={add}/>
             <Button onClick={() => signOut()}>Logout</Button>
         </Container>
@@ -67,6 +82,9 @@ const mapDispatchToProps = (dispatch) => {
         add: (transtion) => dispatch(addTransition(transtion)),
         getWallets: () => dispatch(getWallets()),
         createWallet: (wallet) => dispatch(createWallet(wallet)),
+        deleteWallet: (wallet) => dispatch(deleteWallet(wallet)),
+        addAmount: (walletID, amount) => dispatch(addAmountToWallet(walletID, amount)),
+        subAmount: (walletID, amount) => dispatch(subtractAmountToWallet(walletID, amount))
     }
 }
 
