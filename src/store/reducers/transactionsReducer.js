@@ -1,9 +1,9 @@
 const initialData = {
     error: '',
-    docs: [],
+    transactions: [],
 }
 
-const transitionsReducer = (state = initialData, action) => {
+const transactionsReducer = (state = initialData, action) => {
     switch (action.type) {
         case 'TRANSITION_DONE':
             console.log('done')
@@ -20,17 +20,17 @@ const transitionsReducer = (state = initialData, action) => {
             return {
                 ...state,
                 error: '',
-                docs: action.docs,
+                transactions: action.docs,
             }
         case 'QUERY_ERROR':
             return {
                 ...state,
                 error: action.error,
-                docs: [],
+                transactions: [],
             }
         default:
             return state;
     }
 }
 
-export default transitionsReducer
+export default transactionsReducer

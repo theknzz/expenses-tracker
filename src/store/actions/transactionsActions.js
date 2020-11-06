@@ -1,21 +1,23 @@
 import { v4 as uuidv4 } from 'uuid';
 
-export const addTransition = (transition) => {
+export const addTransaction = (transaction) => {
     return (dispatch, getState, { getFirebase }) => {
         const firebase = getFirebase();
         const firestore = firebase.firestore();
         const auth = firebase.auth();
 
+        if (!auth.currentUser) return dispatch({type: 'USER_NOT_LOGGED'});
+
         const { uid } = auth.currentUser;
 
         firestore.collection(`expenses-${uid}`).add({
             id: uuidv4(),
-            description: transition.description,
-            amount: transition.amount,
+            description: transaction.description,
+            amount: transaction.amount,
             author: uid,
-            category: transition.category,
-            discounts: transition.discounts,
-            boughtFrom: transition.boughtFrom,
+            category: transaction.category,
+            discounts: transaction.discounts,
+            boughtFrom: transaction.boughtFrom,
             date: firebase.firestore.FieldValue.serverTimestamp(),
         }).then(res => {
             dispatch({type: 'TRANSITION_DONE'})
@@ -27,14 +29,15 @@ export const addTransition = (transition) => {
     }
 }
 
-export const listTransitions = () => {
+export const listTransactions = () => {
     return (dispatch, getState, { getFirebase }) => {
         const firebase = getFirebase();
         const firestore = firebase.firestore();
         const auth = firebase.auth();
 
-        const { uid } = auth.currentUser;
+        if (!auth.currentUser) return dispatch({type: 'USER_NOT_LOGGED'});
 
+        const { uid } = auth.currentUser;
 
         firestore.collection(`expenses-${uid}`).where('author', '==', uid).get()
             .then(querySnapshot => {

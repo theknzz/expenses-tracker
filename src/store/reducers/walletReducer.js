@@ -4,7 +4,6 @@ const initialData = {
 }
 
 const walletReducer = (state = initialData, action) => {
-    console.log(state)
     switch (action.type) {
         case 'GET_WALLETS_OK':
             return {
@@ -38,6 +37,11 @@ const walletReducer = (state = initialData, action) => {
             return {
                 ...state,
                 error: action.error,
+            }
+        case 'USER_NOT_LOGGED':
+            return {
+                ...state,
+                error: 'user not logged!',
             }
         default:
             return state;

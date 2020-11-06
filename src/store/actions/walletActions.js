@@ -6,6 +6,7 @@ export const getWallets = () => {
         const db = firebase.firestore();
         const auth = firebase.auth();
 
+        if (!auth.currentUser) return dispatch({type: 'USER_NOT_LOGGED'})
         const { uid } = auth.currentUser;
 
         let wallets = [];
@@ -19,11 +20,11 @@ export const getWallets = () => {
                         amount: wallet.amount,
                     }))
                 })
-                dispatch({type: 'GET_WALLETS_OK', wallets})
+                return dispatch({type: 'GET_WALLETS_OK', wallets})
         })
             .catch(err => {
                 console.error(err)
-                dispatch({type: 'GET_WALLETS_ERROR', error: err.message})
+                return dispatch({type: 'GET_WALLETS_ERROR', error: err.message})
             })
     }
 }
@@ -33,6 +34,8 @@ export const createWallet = (wallet) => {
         const firebase = getFirebase();
         const db = firebase.firestore();
         const auth = firebase.auth();
+
+        if (!auth.currentUser) return dispatch({type: 'USER_NOT_LOGGED'})
 
         const newWallet = {
             name: wallet.name,
@@ -45,10 +48,10 @@ export const createWallet = (wallet) => {
                 wallets: firebase.firestore.FieldValue.arrayUnion(newWallet)
             })
             .then(res => {
-                dispatch({type: 'CREATE_WALLET_OK', wallet: newWallet})
+                return dispatch({type: 'CREATE_WALLET_OK', wallet: newWallet})
             })
             .catch(err => {
-                dispatch({type: 'CREATE_WALLET_ERROR', error: err.message})
+                return dispatch({type: 'CREATE_WALLET_ERROR', error: err.message})
             })
     }
 }
@@ -58,6 +61,8 @@ export const deleteWallet = (wallet) => {
         const firebase = getFirebase();
         const db = firebase.firestore();
         const auth = firebase.auth();
+
+        if (!auth.currentUser) return dispatch({type: 'USER_NOT_LOGGED'})
 
         db.collection('users').doc(auth.currentUser.uid).update({
             wallets: firebase.firestore.FieldValue.arrayRemove(wallet)
@@ -71,6 +76,8 @@ export const addAmountToWallet = (walletID, amount) => {
         const firebase = getFirebase();
         const db = firebase.firestore();
         const auth = firebase.auth();
+
+        if (!auth.currentUser) return dispatch({type: 'USER_NOT_LOGGED'})
 
         let target=-1;
         let list = [];
@@ -87,7 +94,7 @@ export const addAmountToWallet = (walletID, amount) => {
                 if (target!==-1)
                     list[target].amount += amount;
                 else
-                    dispatch({type: 'WALLET_UPDATE_ERROR', error: 'Could not find specific wallet in your profile!'})
+                    return dispatch({type: 'WALLET_UPDATE_ERROR', error: 'Could not find specific wallet in your profile!'})
 
                 db.collection('users').doc(auth.currentUser.uid).update({
                     wallets: list,
@@ -104,6 +111,8 @@ export const subtractAmountToWallet = (walletID, amount) => {
         const db = firebase.firestore();
         const auth = firebase.auth();
 
+        if (!auth.currentUser) return dispatch({type: 'USER_NOT_LOGGED'})
+
         let target = -1;
         let list = [];
 
@@ -119,7 +128,7 @@ export const subtractAmountToWallet = (walletID, amount) => {
                 if (target!==-1)
                     list[target].amount -= amount;
                 else
-                    dispatch({type: 'WALLET_UPDATE_ERROR', error: 'Could not find specific wallet in your profile!'})
+                    return dispatch({type: 'WALLET_UPDATE_ERROR', error: 'Could not find specific wallet in your profile!'})
 
                 db.collection('users').doc(auth.currentUser.uid).update({
                     wallets: list,

@@ -1,18 +1,20 @@
 import React from 'react'
 import styled from "@emotion/styled";
+import Wallets from "./Wallets";
+import Transactions from "./Transactions";
 
 const Container = styled.div`
     display: flex;
     height: 100%;
-    flex-flow: column nowrap;
-    justify-content: center;
-    align-items: center;
+    padding: 100px;
+    justify-content: space-between;
 `
 
 const Dashboard = () => {
     return(
         <Container>
-            <h1>Dashborad</h1>
+            <Wallets />
+            <Transactions />
         </Container>
     );
 }

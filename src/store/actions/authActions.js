@@ -51,3 +51,14 @@ export const signOut = () =>  {
             })
     }
 }
+
+export const update = () => {
+    return (dispatch, getState, { getFirebase }) => {
+        const firebase = getFirebase();
+        const auth = firebase.auth();
+
+        console.log('updating...', auth.currentUser)
+
+        auth.currentUser ? dispatch({type: 'USER_LOGGED', user: auth.currentUser}) : dispatch({type: 'USER_NOT_LOGGED'})
+    }
+}

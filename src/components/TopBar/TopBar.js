@@ -2,15 +2,8 @@ import React, { useState, useEffect } from 'react'
 import styled from '@emotion/styled'
 import { connect } from 'react-redux'
 import { signIn, signOut } from "../../store/actions/authActions";
-import {addTransition} from "../../store/actions/transitionsActions";
+import {addTransaction} from "../../store/actions/transactionsActions";
 import PromptDialog from "./PromptDialog";
-import {
-    addAmountToWallet,
-    createWallet,
-    deleteWallet,
-    getWallets,
-    subtractAmountToWallet
-} from "../../store/actions/walletActions";
 
 const Container = styled.div`
     display: flex;
@@ -30,36 +23,12 @@ const Button = styled.button`
     text-transform: uppercase;
 `
 
-const TopBar = ({ signIn, signOut, user, add, list, error, getWallets, wallets, createWallet, deleteWallet, addAmount, subAmount } ) => {
+const TopBar = ({ signIn, signOut, user, add, error} ) => {
 
-    useEffect(() => {
-        user && getWallets();
-    }, [])
+    console.log(user, error)
 
     const content = user ? (
         <Container>
-            <Button onClick={() => {
-                getWallets()
-                console.log(wallets)
-            }}>Get Wallets</Button>
-            <Button onClick={() => {
-                createWallet({
-                    name: 'new_wallet',
-                    amount: '420',
-                    icon: 'http://placecorgi.com/50/50',
-                })
-                getWallets()
-                console.log('create')
-            }}>Create Wallet</Button>
-            <Button onClick={() => {
-                deleteWallet(wallets[0])
-            }}>Delete first wallet</Button>
-            <Button onClick={() => {
-                addAmount(wallets[0].id, 50)
-            }}>Add 50$</Button>
-            <Button onClick={() => {
-                subAmount(wallets[0].id, 50)
-            }}>Sub 50$</Button>
             <PromptDialog add={add}/>
             <Button onClick={() => signOut()}>Logout</Button>
         </Container>
@@ -68,7 +37,7 @@ const TopBar = ({ signIn, signOut, user, add, list, error, getWallets, wallets, 
             <Button onClick={() => signIn()}>Login</Button>
         </Container>
 
-    return(
+    return (
         <>
             {content}
         </>
@@ -79,19 +48,14 @@ const mapDispatchToProps = (dispatch) => {
     return {
         signIn: () => dispatch(signIn()),
         signOut: () => dispatch(signOut()),
-        add: (transtion) => dispatch(addTransition(transtion)),
-        getWallets: () => dispatch(getWallets()),
-        createWallet: (wallet) => dispatch(createWallet(wallet)),
-        deleteWallet: (wallet) => dispatch(deleteWallet(wallet)),
-        addAmount: (walletID, amount) => dispatch(addAmountToWallet(walletID, amount)),
-        subAmount: (walletID, amount) => dispatch(subtractAmountToWallet(walletID, amount))
+        add: (transaction) => dispatch(addTransaction(transaction)),
     }
 }
 
 const mapStateToProps = (state) => {
     return {
         user: state.auth.user,
-        error: state.transitions.error,
+        error: state.auth.error,
         wallets: state.wallet.wallets,
     }
 }

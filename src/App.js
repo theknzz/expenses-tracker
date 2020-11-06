@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import TopBar from "./components/TopBar/TopBar";
 import Dashboard from "./components/Dashboard/Dashboard";
 import Menu from "./components/Menu/Menu";
 import styled from '@emotion/styled'
+import { connect } from 'react-redux'
+import {update} from "./store/actions/authActions";
 
 const Container = styled.div`
     display: flex;
@@ -25,8 +27,13 @@ const RightWrapper = styled.div`
     flex-flow: column nowrap;
 `
 
-function App() {
-  return (
+const App = ({ update }) => {
+
+    useEffect(() => {
+        update();
+    })
+
+    return (
     <div className="App">
         <Container>
             <LeftWrapper>
@@ -38,7 +45,13 @@ function App() {
             </RightWrapper>
         </Container>
     </div>
-  );
+    );
 }
 
-export default App;
+const mapDispatchToProps = (dispatch) => {
+    return {
+        update: () => dispatch(update()),
+    }
+}
+
+export default connect(null, mapDispatchToProps)(App)
